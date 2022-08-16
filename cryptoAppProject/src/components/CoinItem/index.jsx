@@ -3,8 +3,8 @@ import { Text, View, Image } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import styles from "./styles";
 
-const CoinItem = (props) => {
-    console.log(props.name)
+const CoinItem = ({ marketCoin }) => {
+    console.log(marketCoin)
     return (
         <View style={styles.coinContainer}>
             <Image
