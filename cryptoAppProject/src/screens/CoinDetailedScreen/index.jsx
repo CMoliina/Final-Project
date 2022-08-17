@@ -1,22 +1,25 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
-import { Ionicons, EvilIcons } from '@expo/vector-icons';
+import { View, Text } from "react-native";
 import Coin from '../../../assets/data/crypto.json';
-
+import CoinDetailedHeader from "./components/CoinDetailedHeader";
 const CoinDetailedScreen = () => {
     const {
         image: { small },
         symbol,
         name,
-        market_data: { market_cap_rank }
+        market_data: { market_cap_rank, current_price }
     } = Coin;
     return (
-        <View style={{flexDirection:'row', paddingHorizontal:10 }}>
-            <Ionicons name="chevron-back-sharp" size={30} color="white" />
-            <Image source={{ uri: small }} style={{ width: 25, height: 25 }} />
-            <Text style={{ color: 'white' }}>{symbol.toUpperCase()}</Text>
-            <Text style={{ color: 'white' }}>#{market_cap_rank}</Text>
-            <EvilIcons name="user" size={30} color="white" />
+        <View style={{ padding: 10 }}>
+            <CoinDetailedHeader
+                image={small}
+                symbol={symbol}
+                marketCapRank={market_cap_rank}
+            />
+            <View>
+                <Text style={{ color: 'white', fontSize: 15 }}>{name}</Text>
+                <Text style={{ color: 'white' }}>${current_price.usd}</Text>
+            </View>
         </View>
     );
 };
