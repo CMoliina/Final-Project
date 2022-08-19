@@ -1,10 +1,10 @@
-import React from "react";
-import { View, Text, Dimensions } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Dimensions, TextInput } from "react-native";
 import Coin from '../../../assets/data/crypto.json';
 import CoinDetailedHeader from "./components/CoinDetailedHeader";
 import styles from "./styles";
 import { AntDesign } from '@expo/vector-icons';
-import { ChartDot, ChartPath, ChartPathProvider } from '@rainbow-me/animated-charts';
+import { ChartDot, ChartPath, ChartPathProvider, ChartYLabel } from '@rainbow-me/animated-charts';
 
 
 
@@ -25,7 +25,32 @@ const CoinDetailedScreen = () => {
 
     const percentageColor = price_change_percentage_24h < 0 ? '#ea3943' : '#16c784';
 
+    const chartColor = current_price.usd > prices[0][1] ? '#ea3943' : '#16c784';
+
     const ScreenWidth = Dimensions.get('window').width;
+
+    const [coinValue, setCoinValue] = useState("1");
+    const [usdValue, setUsdValue] = useState(current_price.usd.toString());
+
+    const changeCoinValue = (value) => {
+        setCoinValue(value);
+        const floatValue = parseFloat(value.replace(',', '.')) || 0
+        setUsdValue((floatValue * current_price.usd).toString())
+    };
+
+    const changeUsdValue = (value) => {
+        setUsdValue(value);
+        const floatValue = parseFloat(value.replace(',', '.')) || 0
+        setCoinValue((floatValue / current_price.usd).toString())
+    };
+
+    const formatCurrency = (value) => {
+        "worklet";
+        if (value === "") {
+            return `$${current_price.usd.toFixed(2).toString()}`
+        }
+        return `$${parseFloat(value).toFixed(2)}`
+    }
 
     return (
         <View style={{ paddingHorizontal: 10 }}>
@@ -42,7 +67,11 @@ const CoinDetailedScreen = () => {
                 <View style={styles.priceContainer}>
                     <View>
                         <Text style={styles.name}>{name}</Text>
-                        <Text style={styles.currentPrice}>${current_price.usd}</Text>
+                        <ChartYLabel
+                            format={formatCurrency}
+                            style={styles.currentPrice}
+                        />
+                        {/* <Text style={styles.currentPrice}>${current_price.usd}</Text> */}
                     </View>
                     <View style={{ backgroundColor: percentageColor, paddingHorizontal: 3, paddingVertical: 8, borderRadius: 5, flexDirection: 'row' }}>
                         <AntDesign
@@ -58,10 +87,32 @@ const CoinDetailedScreen = () => {
                 </View>
                 <View>
                     <ChartPath
+                        strokeWidth={5}
                         height={ScreenWidth / 2}
                         stroke="yellow"
                         width={ScreenWidth} />
-                    <ChartDot style={{ backgroundColor: 'white' }} />
+                    <ChartDot style={{ backgroundColor: chartColor }} />
+                </View>
+                <View style={{ flexDirection: 'row' }}>
+                    <View style={{ flexDirection: 'row', flex: 1 }}>
+                        <Text style={{ color: 'white', alignSelf: 'center' }}>{symbol.toUpperCase()}</Text>
+                        <TextInput
+                            style={styles.input}
+                            value={coinValue}
+                            keyboardType="numeric"
+                            onChangeText={changeCoinValue}
+                        />
+                    </View>
+
+                    <View style={{ flexDirection: 'row', flex: 1 }}>
+                        <Text style={{ color: 'white' }}>USD</Text>
+                        <TextInput
+                            style={styles.input}
+                            value={usdValue}
+                            keyboardType="numeric"
+                            onChangeText={changeUsdValue}
+                        />
+                    </View>
                 </View>
             </ChartPathProvider>
         </View>
