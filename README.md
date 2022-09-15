@@ -9,6 +9,7 @@ This is my final university project.
 You can initialize this project in a mobile device using Expo app 
 
 Then in VS CODE: 
+ 
  :small_red_triangle: npm install (command)
  
  :small_red_triangle: expo start (command)
