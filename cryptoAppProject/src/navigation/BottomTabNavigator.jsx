@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/HomeScreen';
 import WatchlistScreen from '../screens/WatchlistScreen';
 import { FontAwesome } from '@expo/vector-icons';
+import ArticleScreen from '../screens/ArticleScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,6 +25,13 @@ const BottomTabNavigator = () => {
                     tabBarIcon: ({ focused, color }) => (<FontAwesome name="home" size={focused ? 30 : 25} color={color} />)
                 }}
             />
+
+            <Tab.Screen
+                name="Articles" component={ArticleScreen} options={{
+                    tabBarIcon: ({ focused, color }) => (<FontAwesome name="newspaper-o" size={focused ? 30 : 25} color={color} />)
+                }}
+            />
+
             <Tab.Screen
                 name="Watchlist" component={WatchlistScreen} options={{
                     tabBarIcon: ({ focused, color }) => (<FontAwesome name="star" size={focused ? 30 : 25} color={color} />)
