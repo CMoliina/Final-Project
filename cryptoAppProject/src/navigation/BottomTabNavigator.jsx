@@ -4,6 +4,7 @@ import HomeScreen from '../screens/HomeScreen';
 import WatchlistScreen from '../screens/WatchlistScreen';
 import { FontAwesome } from '@expo/vector-icons';
 import ArticleScreen from '../screens/ArticleScreen';
+import SearchScreen from '../screens/SearchScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -27,8 +28,14 @@ const BottomTabNavigator = () => {
             />
 
             <Tab.Screen
-                name="Articles" component={ArticleScreen} options={{
-                    tabBarIcon: ({ focused, color }) => (<FontAwesome name="newspaper-o" size={focused ? 30 : 25} color={color} />)
+                name="News" component={ArticleScreen} options={{
+                    tabBarIcon: ({ focused, color }) => (<FontAwesome name="newspaper-o" size={focused ? 25 : 20} color={color} />)
+                }}
+            />
+
+            <Tab.Screen
+                name="Search news" component={SearchScreen} options={{
+                    tabBarIcon: ({ focused, color }) => (<FontAwesome name="search" size={focused ? 25 : 20} color={color} />)
                 }}
             />
 

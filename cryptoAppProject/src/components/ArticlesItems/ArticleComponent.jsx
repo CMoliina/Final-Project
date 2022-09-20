@@ -1,11 +1,17 @@
 import React from "react";
-import { View, Text, SafeAreaView, Image } from "react-native";
+import { View, Text, SafeAreaView, Image, Pressable } from "react-native";
 import styles from "./styles";
 import moment from "moment";
+import * as WebBrowser from 'expo-web-browser';
 
 const ArticleComponent = (props) => {
+
+    const goToSource = () => {
+        WebBrowser.openBrowserAsync(props.url);
+    }
+
     return (
-        <SafeAreaView style={styles.container}>
+        <Pressable style={styles.container} onPress={goToSource} >
             <Image
                 style={styles.image}
                 source={{ uri: props.urlToImage }}
@@ -21,7 +27,7 @@ const ArticleComponent = (props) => {
                     <Text style={{ color: "#00f5d4" }}>Source: <Text style={styles.source}>{props.sourceName}</Text></Text>
                 </View>
             </View>
-        </SafeAreaView>
+        </Pressable>
     )
 }
 
