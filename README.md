@@ -2,7 +2,7 @@
 ## Crypto Price Tracker App :iphone:
 This is my final university project. 
 
- ***The idea is to show a list of ten altcoins and see the charts of each one using CoinGecko API. Also the users can registered in the app, this using Firebase.***
+ ***The idea is to show a list of fifty altcoins, see the charts of each one using CoinGecko API and save (or unsave) in Watchlist option your favorites coins. Also the users can read articles and breaking news headlines about crypto world. Another option is search news about business. All this using News API.***
 - by Camila Molina :chile:
 
 ### Remember:
