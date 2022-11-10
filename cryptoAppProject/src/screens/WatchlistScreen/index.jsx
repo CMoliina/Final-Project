@@ -23,11 +23,9 @@ const WatchlistScreen = () => {
     };
 
     useEffect(() => {
-        fetchWatchlistedCoins();
-    }, []);
-
-    useEffect(() => {
-        fetchWatchlistedCoins();
+        if (watchlistCoinIds.length > 0){
+            fetchWatchlistedCoins();
+        }
     }, [watchlistCoinIds]);
 
     return (
@@ -38,7 +36,7 @@ const WatchlistScreen = () => {
                 <RefreshControl 
                     refreshing={loading}
                     tintColor="white"
-                    onRefresh={fetchWatchlistedCoins}
+                    onRefresh={watchlistCoinIds.length > 0 ? fetchWatchlistedCoins : null}
                 />
             }
         />

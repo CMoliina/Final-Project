@@ -18,7 +18,7 @@ const SearchScreen = () => {
         })
             .then((response) => {
                 // handle success
-                console.log(response.data.articles);
+                //console.log(response.data.articles);
                 setArticles(response.data.articles);
             })
             .catch(function (error) {

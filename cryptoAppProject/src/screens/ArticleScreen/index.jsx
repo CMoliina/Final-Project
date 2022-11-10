@@ -10,7 +10,7 @@ const ArticleScreen = () => {
         axios.get('https://newsapi.org/v2/everything?q=crypto&apiKey=9c419f7a3fc64c8da9256819b59da177')
             .then((response) => {
                 // handle success
-                console.log(response.data.articles);
+                //console.log(response.data.articles);
                 setArticles(response.data.articles);
             })
             .catch(function (error) {
