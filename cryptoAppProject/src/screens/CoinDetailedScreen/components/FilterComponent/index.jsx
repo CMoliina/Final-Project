@@ -4,6 +4,7 @@ import { View, Text, Pressable } from "react-native";
 const FilterComponent = (props) => {
     const { filterDay, filterText, selectedRange, setSelectedRange } = props;
     const isFilterSelected = (filter) => filter === selectedRange;
+    
     return (
         <Pressable style={{
             paddingHorizontal: 10,

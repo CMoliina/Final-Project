@@ -39,7 +39,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#006494",
     paddingVertical: 5,
     borderRadius: 5,
-    marginVertical: 10
+    marginVertical: 10,
+    marginBottom: 30
+  },
+  candleStickText: {
+    color:"white", 
+    fontWeight: "700"
+  },
+  candleStickDataContainer: {
+    flexDirection: "row", 
+    justifyContent: "space-between", 
+    marginHorizontal: 10, 
+    marginTop: 20
+  },
+  candleStickTextLabel: {
+    color: "#121212",
+    fontSize: 13,
   }
 });
 

@@ -2,21 +2,17 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Dimensions, TextInput, ActivityIndicator } from "react-native";
 import CoinDetailedHeader from "./components/CoinDetailedHeader";
 import styles from "./styles";
-import { AntDesign } from "@expo/vector-icons";
-import {
-  ChartDot,
-  ChartPath,
-  ChartPathProvider,
-  ChartYLabel,
-} from "@rainbow-me/animated-charts";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import { LineChart, CandlestickChart } from 'react-native-wagmi-charts';
 import { useRoute } from "@react-navigation/native";
-import { getDetailedCoinData, getCoinMarketChart } from "../../services/requests";
+import { getDetailedCoinData, getCoinMarketChart, getCandleChartData } from "../../services/requests";
 import FilterComponent from "./components/FilterComponent";
-
 
 const CoinDetailedScreen = () => {
   const [coin, setCoin] = useState(null);
   const [coinMarketData, setCoinMarketData] = useState(null);
+  const [coinCandleChartData, setCoinCandleChartData] = useState(null);
+
 
   const route = useRoute();
   const { params: { coinId } } = route;
@@ -25,6 +21,7 @@ const CoinDetailedScreen = () => {
   const [coinValue, setCoinValue] = useState("1");
   const [usdValue, setUsdValue] = useState("");
   const [selectedRange, setSelectedRange] = useState("1");
+  const [isCandleChartVisible, setIsCandleChartVisible] = useState(false);
 
   const fetchCoinData = async () => {
     //setLoading(true);
@@ -39,12 +36,18 @@ const CoinDetailedScreen = () => {
     setCoinMarketData(fetchedCoinMarketData);
   };
 
+  const fetchCandleStickChartData = async (selectedRangeValue) => {
+    const fetchedSelectedCandleChartData = await getCandleChartData(coinId, selectedRangeValue);
+    setCoinCandleChartData(fetchedSelectedCandleChartData);
+  };
+
   useEffect(() => {
     fetchCoinData();
     fetchMarketCoinData(1);
+    fetchCandleStickChartData();
   }, [])
 
-  if (loading || !coin || !coinMarketData) {
+  if (loading || !coin || !coinMarketData || !coinCandleChartData) {
     return <ActivityIndicator size="large" />
   }
 
@@ -67,7 +70,7 @@ const CoinDetailedScreen = () => {
   const chartColor = current_price.usd > prices[0][1] ? "#16c784" : "#ea3943";
   const screenWidth = Dimensions.get("window").width;
 
-  const formatCurrency = (value) => {
+  const formatCurrency = ({ value }) => {
     "worklet";
     if (value === "") {
       return `$${current_price.usd.toFixed(2)}`;
@@ -90,16 +93,12 @@ const CoinDetailedScreen = () => {
   const onSelectedRangeChange = (selectedRangeValue) => {
     setSelectedRange(selectedRangeValue);
     fetchMarketCoinData(selectedRangeValue);
+    fetchCandleStickChartData(selectedRangeValue);
   }
 
   return (
     <View style={{ paddingHorizontal: 10 }}>
-      <ChartPathProvider
-        data={{
-          points: prices.map(([x, y]) => ({ x, y })),
-
-        }}
-      >
+      <LineChart.Provider data={prices.map(([timestamp, value]) => ({ timestamp, value }))}>
         <CoinDetailedHeader
           coinId={id}
           image={small}
@@ -109,7 +108,7 @@ const CoinDetailedScreen = () => {
         <View style={styles.priceContainer}>
           <View>
             <Text style={styles.name}>{name}</Text>
-            <ChartYLabel format={formatCurrency} style={styles.currentPrice} />
+            <LineChart.PriceText format={formatCurrency} style={styles.currentPrice} />
           </View>
           <View
             style={{
@@ -137,16 +136,50 @@ const CoinDetailedScreen = () => {
           <FilterComponent filterDay="30" filterText="30d" selectedRange={selectedRange} setSelectedRange={onSelectedRangeChange} />
           <FilterComponent filterDay="365" filterText="1y" selectedRange={selectedRange} setSelectedRange={onSelectedRangeChange} />
           <FilterComponent filterDay="max" filterText="All" selectedRange={selectedRange} setSelectedRange={onSelectedRangeChange} />
+
+          {isCandleChartVisible ? (
+            <MaterialIcons name="show-chart" size={24} color="#16c784" onPress={() => setIsCandleChartVisible(false)} />
+          ) : (
+            <MaterialIcons name="waterfall-chart" size={24} color="#16c784" onPress={() => setIsCandleChartVisible(true)} />
+          )}
         </View>
-        <View>
-          <ChartPath
-            strokeWidth={2}
-            height={screenWidth / 2}
-            stroke={chartColor}
-            width={screenWidth}
-          />
-          <ChartDot style={{ backgroundColor: chartColor }} />
-        </View>
+
+        {isCandleChartVisible ? (
+          <CandlestickChart.Provider data={coinCandleChartData.map(([timestamp, open, high, low, close]) => ({ timestamp, open, high, low, close }))}>
+            <CandlestickChart height={screenWidth / 2} width={screenWidth}>
+              <CandlestickChart.Candles />
+              <CandlestickChart.Crosshair>
+                <CandlestickChart.Tooltip />
+              </CandlestickChart.Crosshair>
+            </CandlestickChart>
+            <View style={styles.candleStickDataContainer}>
+              <View>
+                <Text style={styles.candleStickTextLabel}>Open</Text>
+                <CandlestickChart.PriceText style={styles.candleStickText} type="open" />
+              </View>
+              <View>
+                <Text style={styles.candleStickTextLabel}>High</Text>
+                <CandlestickChart.PriceText style={styles.candleStickText} type="high" />
+              </View>
+              <View>
+                <Text style={styles.candleStickTextLabel}>Low</Text>
+                <CandlestickChart.PriceText style={styles.candleStickText} type="low" />
+              </View>
+              <View>
+                <Text style={styles.candleStickTextLabel}>Close</Text>
+                <CandlestickChart.PriceText style={styles.candleStickText} type="close" />
+              </View>
+            </View>
+            <CandlestickChart.DatetimeText style={{ color: "white", fontWeight: "700", margin: 10 }} />
+          </CandlestickChart.Provider>
+        ) : (
+          <LineChart height={screenWidth / 2} width={screenWidth}>
+            <LineChart.Path color={chartColor} />
+            <LineChart.CursorCrosshair color={chartColor} />
+          </LineChart>
+        )}
+
+
         <View style={{ flexDirection: "row" }}>
           <View style={{ flexDirection: "row", flex: 1 }}>
             <Text style={{ color: "white", alignSelf: "center" }}>
@@ -170,7 +203,7 @@ const CoinDetailedScreen = () => {
             />
           </View>
         </View>
-      </ChartPathProvider>
+      </LineChart.Provider>
     </View>
   );
 };
